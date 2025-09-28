@@ -227,34 +227,37 @@ io.on('connection', socket => {
     
     const playerIdx = lobby.players.findIndex(p=>p.id === pid);
     if (playerIdx === -1) return;
-    if (playerIdx !== lobby.turnIndex) {
+    
+    // Only validate turn if we're not in a special requirement
+    if (!lobby.specialRequirement && playerIdx !== lobby.turnIndex) {
       socket.emit('error-msg','Not your turn');
       return;
     }
+    
     const player = lobby.players[playerIdx];
     if (player.hand.length === 0) {
       socket.emit('error-msg','No cards to play');
       return;
     }
+    
     const card = player.hand.shift();
     lobby.centerPile.push(card);
 
-    // check for double: current card same as previous
+    // Import special rules handler
+    const { handleSpecialRequirement } = require('./game/specialRules');
+    
+    // Handle special rules
+    const result = handleSpecialRequirement(lobby, card, player, socket);
+    
+    // check for double: current card same as previous (still needed for non-special cases)
     let double = false;
     if (lobby.centerPile.length >= 2) {
       const prev = lobby.centerPile[lobby.centerPile.length-2];
       const cur = card;
-      if (prev.rank === cur.rank) double = true;
-    }
-
-    // helper to create special requirement (store initiator by id to survive reindexes)
-    function makeSpecial(rank, initiatorId) {
-      let count = 0;
-      if (rank === 'A') count = 1;
-      if (rank === '2') count = 2;
-      if (rank === '3') count = 3;
-      if (count > 0) return {count, remaining: count, initiatorId};
-      return null;
+      if (prev.rank === cur.rank) {
+        double = true;
+        io.to(lobby.code).emit('double-available');
+      }
     }
 
     // if we are currently in a special requirement
