@@ -10,15 +10,42 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/public'));
 
-// Game state (single room for simplicity)
+// Game state - multiple lobbies
 const MAX_PLAYERS = 4;
-let players = []; // {id, name, socketId, hand: [], ready: bool}
-let deck = [];
-let centerPile = [];
-let turnIndex = 0;
-let gameStarted = false;
-let lobbyHostId = null; // player id who can start
-let slapCooldown = {}; // socketId -> timestamp for anti-spam
+const LOBBY_CODE_LENGTH = 6;
+
+// Map of lobby code -> lobby state
+const lobbies = new Map();
+
+// Map of socket id -> lobby code for quick lookups
+const playerLobbies = new Map();
+
+// Generate random lobby code
+function generateLobbyCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Omit similar looking chars
+  let code;
+  do {
+    code = Array(LOBBY_CODE_LENGTH).fill(0)
+      .map(() => chars[Math.floor(Math.random() * chars.length)])
+      .join('');
+  } while(lobbies.has(code));
+  return code;
+}
+
+// Create new lobby state
+function createLobby() {
+  return {
+    code: generateLobbyCode(),
+    players: [], // {id, name, socketId, hand: [], ready: bool}
+    deck: [],
+    centerPile: [],
+    turnIndex: 0,
+    gameStarted: false,
+    hostId: null,
+    slapCooldown: {}, // socketId -> timestamp for anti-spam
+    specialRequirement: null
+  };
+}
 
 function createDeck() {
   const suits = ['♠', '♥', '♦', '♣'];
@@ -35,122 +62,179 @@ function shuffle(array) {
   }
 }
 
-function deal() {
-  deck = createDeck();
-  shuffle(deck);
-  const n = players.length;
-  const per = Math.floor(deck.length / n);
+function deal(lobby) {
+  lobby.deck = createDeck();
+  shuffle(lobby.deck);
+  const n = lobby.players.length;
+  const per = Math.floor(lobby.deck.length / n);
   // clear hands
-  players.forEach(p => p.hand = []);
+  lobby.players.forEach(p => p.hand = []);
   // deal per cards to each player in round-robin
   let idx = 0;
   for (let i = 0; i < per * n; i++) {
-    players[idx].hand.push(deck[i]);
+    lobby.players[idx].hand.push(lobby.deck[i]);
     idx = (idx + 1) % n;
   }
   // remove dealt cards from deck (they are distributed)
-  deck = deck.slice(per*n);
+  lobby.deck = lobby.deck.slice(per*n);
 }
 
-function broadcastState() {
-  const publicPlayers = players.map(p=>({id:p.id,name:p.name,handCount:p.hand.length, socketId:p.socketId, ready: !!p.ready}));
-  io.emit('state',{
+function getPublicState(lobby) {
+  const publicPlayers = lobby.players.map(p => ({
+    id: p.id,
+    name: p.name,
+    handCount: p.hand.length,
+    socketId: p.socketId,
+    ready: !!p.ready
+  }));
+  return {
     players: publicPlayers,
-    centerCount: centerPile.length,
-    top: centerPile.length? centerPile[centerPile.length-1] : null,
-    turnPlayerId: players.length? players[turnIndex].id : null,
-    gameStarted,
-    lobbyHostId
-  });
+    centerCount: lobby.centerPile.length,
+    top: lobby.centerPile.length ? lobby.centerPile[lobby.centerPile.length-1] : null,
+    turnPlayerId: lobby.players.length ? lobby.players[lobby.turnIndex].id : null,
+    gameStarted: lobby.gameStarted,
+    hostId: lobby.hostId,
+    code: lobby.code
+  };
 }
 
-function nextTurn(skip=1) {
-  if (!players.length) return;
+function broadcastState(lobby) {
+  io.to(lobby.code).emit('state', getPublicState(lobby));
+}
+
+function nextTurn(lobby, skip=1) {
+  if (!lobby.players.length) return;
   let attempts = 0;
   do {
-    turnIndex = (turnIndex + skip) % players.length;
+    lobby.turnIndex = (lobby.turnIndex + skip) % lobby.players.length;
     attempts++;
     // if this player has no cards, skip them
-    if (players[turnIndex].hand.length > 0) break;
-  } while (attempts <= players.length);
+    if (lobby.players[lobby.turnIndex].hand.length > 0) break;
+  } while (attempts <= lobby.players.length);
+  // emit turn change event for visual feedback
+  io.to(lobby.code).emit('turn-changed', {
+    playerId: lobby.players[lobby.turnIndex].id,
+    turnIndex: lobby.turnIndex
+  });
 }
 
 io.on('connection', socket => {
   console.log('conn', socket.id);
 
-  socket.on('join', name => {
-    if (players.length >= MAX_PLAYERS) {
-      socket.emit('join-failed','Room full');
+  // Create a new lobby
+  socket.on('create-lobby', name => {
+    const lobby = createLobby();
+    const id = Math.random().toString(36).slice(2,9);
+    
+    lobby.players.push({id, name, socketId: socket.id, hand: [], ready: false});
+    lobby.hostId = id;
+    
+    socket.data.playerId = id;
+    socket.join(lobby.code); // Join socket.io room
+    playerLobbies.set(socket.id, lobby.code);
+    
+    lobbies.set(lobby.code, lobby);
+    socket.emit('lobby-created', {code: lobby.code, id, name});
+    io.to(lobby.code).emit('state', getPublicState(lobby));
+  });
+
+  // Join existing lobby
+  socket.on('join-lobby', ({code, name}) => {
+    code = code.toUpperCase();
+    const lobby = lobbies.get(code);
+    if (!lobby) {
+      socket.emit('join-failed', 'Lobby not found');
       return;
     }
+    if (lobby.gameStarted) {
+      socket.emit('join-failed', 'Game already in progress');
+      return;
+    }
+    if (lobby.players.length >= MAX_PLAYERS) {
+      socket.emit('join-failed', 'Lobby full');
+      return;
+    }
+    
     const id = Math.random().toString(36).slice(2,9);
-    players.push({id,name, socketId: socket.id, hand: [], ready: false});
+    lobby.players.push({id, name, socketId: socket.id, hand: [], ready: false});
+    
     socket.data.playerId = id;
-    socket.emit('joined', {id, name});
-    // first player is lobby host
-    if (!lobbyHostId) lobbyHostId = id;
-    broadcastState();
+    socket.join(code); // Join socket.io room
+    playerLobbies.set(socket.id, code);
+    
+    socket.emit('joined', {code, id, name});
+    io.to(code).emit('state', getPublicState(lobby));
   });
 
   socket.on('set-ready', ready => {
     const pid = socket.data.playerId;
-    const p = players.find(x=>x.id===pid);
+    const lobbyCode = playerLobbies.get(socket.id);
+    const lobby = lobbies.get(lobbyCode);
+    if (!lobby) return;
+    
+    const p = lobby.players.find(x=>x.id===pid);
     if (p) p.ready = !!ready;
-    broadcastState();
+    broadcastState(lobby);
   });
 
   socket.on('start', ()=>{
     const pid = socket.data.playerId;
-    if (pid !== lobbyHostId) {
+    const lobbyCode = playerLobbies.get(socket.id);
+    const lobby = lobbies.get(lobbyCode);
+    if (!lobby) return;
+
+    if (pid !== lobby.hostId) {
       socket.emit('error-msg','Only host can start');
       return;
     }
-    if (gameStarted) return;
-    if (players.length < 2) {
+    if (lobby.gameStarted) return;
+    if (lobby.players.length < 2) {
       socket.emit('error-msg','Need 2+ players to start');
       return;
     }
     // require all ready
-    if (!players.every(p=>p.ready)) {
+    if (!lobby.players.every(p=>p.ready)) {
       socket.emit('error-msg','All players must be ready');
       return;
     }
-    deal();
-    centerPile = [];
-    turnIndex = 0;
-    gameStarted = true;
+    deal(lobby);
+    lobby.centerPile = [];
+    lobby.turnIndex = 0;
+    lobby.gameStarted = true;
     // reset readiness
-    players.forEach(p=> p.ready = false);
-    broadcastState();
+    lobby.players.forEach(p=> p.ready = false);
+    broadcastState(lobby);
+    // emit game-started for fullscreen transition
+    io.to(lobby.code).emit('game-started');
   });
 
   socket.on('play-card', ()=>{
-    if (!gameStarted) return;
     const pid = socket.data.playerId;
-    const playerIdx = players.findIndex(p=>p.id === pid);
+    const lobbyCode = playerLobbies.get(socket.id);
+    const lobby = lobbies.get(lobbyCode);
+    if (!lobby || !lobby.gameStarted) return;
+    
+    const playerIdx = lobby.players.findIndex(p=>p.id === pid);
     if (playerIdx === -1) return;
-    if (playerIdx !== turnIndex) {
+    if (playerIdx !== lobby.turnIndex) {
       socket.emit('error-msg','Not your turn');
       return;
     }
-    const player = players[playerIdx];
+    const player = lobby.players[playerIdx];
     if (player.hand.length === 0) {
       socket.emit('error-msg','No cards to play');
       return;
     }
     const card = player.hand.shift();
-    centerPile.push(card);
+    lobby.centerPile.push(card);
 
     // check for double: current card same as previous
     let double = false;
-    if (centerPile.length >= 2) {
-      const prev = centerPile[centerPile.length-2];
+    if (lobby.centerPile.length >= 2) {
+      const prev = lobby.centerPile[lobby.centerPile.length-2];
       const cur = card;
       if (prev.rank === cur.rank) double = true;
     }
-
-    // initialise server specialRequirement store if missing
-    io.sockets.server.specialRequirement = io.sockets.server.specialRequirement || null;
 
     // helper to create special requirement (store initiator by id to survive reindexes)
     function makeSpecial(rank, initiatorId) {
@@ -163,136 +247,149 @@ io.on('connection', socket => {
     }
 
     // if we are currently in a special requirement
-    if (io.sockets.server.specialRequirement) {
-      const req = io.sockets.server.specialRequirement;
+    if (lobby.specialRequirement) {
+      const req = lobby.specialRequirement;
       // if the played card is A/2/3, start a new requirement with this player as initiator
       const newSpec = makeSpecial(card.rank, player.id);
       if (newSpec) {
-        io.sockets.server.specialRequirement = newSpec;
-        io.emit('card-played',{playerId: player.id, card, double, special: io.sockets.server.specialRequirement});
+        lobby.specialRequirement = newSpec;
+        io.to(lobby.code).emit('card-played', {playerId: player.id, card, double, special: lobby.specialRequirement});
         // move to next player to respond to new requirement
-        nextTurn(1);
-        broadcastState();
+        nextTurn(lobby, 1);
+        broadcastState(lobby);
         return;
       }
 
       // otherwise decrement remaining
       req.remaining -= 1;
-      io.emit('card-played',{playerId: player.id, card, double, special: req});
+      io.to(lobby.code).emit('card-played', {playerId: player.id, card, double, special: req});
 
       if (req.remaining <= 0) {
         // requirement failed to be countered: initiator wins the center pile
-        const initiator = players.find(p=>p.id === req.initiatorId);
+        const initiator = lobby.players.find(p=>p.id === req.initiatorId);
         if (initiator) {
-          const won = centerPile.splice(0, centerPile.length);
+          const won = lobby.centerPile.splice(0, lobby.centerPile.length);
           initiator.hand.push(...won);
-          io.emit('special-resolve',{winnerId: initiator.id, wonCount: won.length});
+          io.to(lobby.code).emit('special-resolve', {winnerId: initiator.id, wonCount: won.length});
           // set turn to initiator index
-          const newIdx = players.findIndex(p=>p.id === initiator.id);
-          if (newIdx !== -1) turnIndex = newIdx;
+          const newIdx = lobby.players.findIndex(p=>p.id === initiator.id);
+          if (newIdx !== -1) lobby.turnIndex = newIdx;
         }
-        io.sockets.server.specialRequirement = null;
-        broadcastState();
+        lobby.specialRequirement = null;
+        broadcastState(lobby);
         return;
       }
 
       // still pending: advance to next player who must continue playing
-      nextTurn(1);
-      broadcastState();
+      nextTurn(lobby, 1);
+      broadcastState(lobby);
       return;
     }
 
     // no existing special requirement: if this card is A/2/3, create one
     const special = makeSpecial(card.rank, player.id);
     if (special) {
-      io.sockets.server.specialRequirement = special;
+      lobby.specialRequirement = special;
     }
 
-    io.emit('card-played',{playerId: player.id, card, double, special: io.sockets.server.specialRequirement});
-    nextTurn(1);
-    broadcastState();
+    io.to(lobby.code).emit('card-played', {playerId: player.id, card, double, special: lobby.specialRequirement});
+    nextTurn(lobby, 1);
+    broadcastState(lobby);
   });
 
   socket.on('slap', ()=>{
-    if (!gameStarted) return;
+    const lobbyCode = playerLobbies.get(socket.id);
+    const lobby = lobbies.get(lobbyCode);
+    if (!lobby || !lobby.gameStarted) return;
+
     const now = Date.now();
-    const last = slapCooldown[socket.id] || 0;
+    const last = lobby.slapCooldown[socket.id] || 0;
     // simple anti-spam: 700ms
     if (now - last < 700) {
       // penalty: drop one card from player's hand to bottom of center pile (if they have any)
       const pid = socket.data.playerId;
-      const p = players.find(x=>x.id===pid);
+      const p = lobby.players.find(x=>x.id===pid);
       if (p && p.hand.length>0) {
         const c = p.hand.pop();
-        centerPile.unshift(c); // put at bottom of center
+        lobby.centerPile.unshift(c); // put at bottom of center
         socket.emit('penalty','spam');
-        io.emit('penalty-applied',{playerId: p.id});
+        io.to(lobby.code).emit('penalty-applied',{playerId: p.id});
       }
-      slapCooldown[socket.id] = now;
-      broadcastState();
+      lobby.slapCooldown[socket.id] = now;
+      broadcastState(lobby);
       return;
     }
-    slapCooldown[socket.id] = now;
+    lobby.slapCooldown[socket.id] = now;
 
     // valid slap if top two are equal
-    if (centerPile.length >= 2) {
-      const top = centerPile[centerPile.length-1];
-      const prev = centerPile[centerPile.length-2];
+    if (lobby.centerPile.length >= 2) {
+      const top = lobby.centerPile[lobby.centerPile.length-1];
+      const prev = lobby.centerPile[lobby.centerPile.length-2];
       if (top.rank === prev.rank) {
         // winner gets entire center pile appended to their hand bottom
         const pid = socket.data.playerId;
-        const p = players.find(x=>x.id===pid);
+        const p = lobby.players.find(x=>x.id===pid);
         if (p) {
           // winner gets center pile in order
-          const won = centerPile.splice(0, centerPile.length);
+          const won = lobby.centerPile.splice(0, lobby.centerPile.length);
           p.hand.push(...won);
-          io.emit('slap-win',{playerId: p.id, wonCount: won.length});
+          io.to(lobby.code).emit('slap-win',{playerId: p.id, wonCount: won.length});
           // if someone now has all cards (52) they win
           if (p.hand.length === 52) {
-            io.emit('game-over',{winnerId: p.id});
-            gameStarted = false;
+            io.to(lobby.code).emit('game-over',{winnerId: p.id});
+            lobby.gameStarted = false;
           }
-          broadcastState();
+          broadcastState(lobby);
           return;
         }
       }
     }
     // invalid slap -> penalty
     const pid = socket.data.playerId;
-    const p = players.find(x=>x.id===pid);
+    const p = lobby.players.find(x=>x.id===pid);
     if (p && p.hand.length>0) {
       const c = p.hand.pop();
-      centerPile.unshift(c);
-      io.emit('invalid-slap',{playerId: p.id});
+      lobby.centerPile.unshift(c);
+      io.to(lobby.code).emit('invalid-slap',{playerId: p.id});
     }
-    broadcastState();
+    broadcastState(lobby);
   });
 
   socket.on('disconnect', ()=>{
+    const lobbyCode = playerLobbies.get(socket.id);
+    if (!lobbyCode) return;
+
+    const lobby = lobbies.get(lobbyCode);
+    if (!lobby) return;
+
     const pid = socket.data.playerId;
-    const idx = players.findIndex(p=>p.id === pid);
-    if (idx !== -1) players.splice(idx,1);
+    const idx = lobby.players.findIndex(p=>p.id === pid);
+    if (idx !== -1) lobby.players.splice(idx,1);
+
+    // Clean up player-lobby mapping
+    playerLobbies.delete(socket.id);
+
     // transfer host if needed
-    if (lobbyHostId === pid) {
-      lobbyHostId = players.length? players[0].id : null;
+    if (lobby.hostId === pid) {
+      lobby.hostId = lobby.players.length ? lobby.players[0].id : null;
     }
+
     // if specialRequirement existed and initiator left, clear it
-    if (io.sockets.server.specialRequirement && io.sockets.server.specialRequirement.initiatorId === pid) {
-      io.sockets.server.specialRequirement = null;
+    if (lobby.specialRequirement && lobby.specialRequirement.initiatorId === pid) {
+      lobby.specialRequirement = null;
     }
-    // if no players left, reset game
-    if (!players.length) {
-      deck = [];
-      centerPile = [];
-      gameStarted = false;
+
+    // if no players left, delete lobby
+    if (!lobby.players.length) {
+      lobbies.delete(lobbyCode);
     } else {
-      // ensure turnIndex points to a valid player; if the removed player was before current index adjust
-      if (idx !== -1 && idx < turnIndex) {
-        turnIndex = Math.max(0, turnIndex - 1);
+      // ensure turnIndex points to a valid player
+      if (idx !== -1 && idx < lobby.turnIndex) {
+        lobby.turnIndex = Math.max(0, lobby.turnIndex - 1);
       }
-      if (turnIndex >= players.length) turnIndex = 0;
+      if (lobby.turnIndex >= lobby.players.length) lobby.turnIndex = 0;
+      broadcastState(lobby);
     }
-    broadcastState();
   });
 });
 

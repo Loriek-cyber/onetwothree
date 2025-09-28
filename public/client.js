@@ -1,146 +1,294 @@
 const socket = io();
 
+// State
 let myId = null;
+let myLobbyCode = null;
 
-const nameInput = document.getElementById('name');
-const joinBtn = document.getElementById('joinBtn');
-const startBtn = document.getElementById('startBtn');
+// DOM elements
+const lobbyView = document.getElementById('lobby-view');
+const gameView = document.getElementById('game-view');
+const createForm = document.getElementById('create-form');
+const joinForm = document.getElementById('join-form');
+const createName = document.getElementById('create-name');
+const joinCode = document.getElementById('join-code');
+const joinName = document.getElementById('join-name');
+const waitingRoom = document.getElementById('waiting-room');
+const lobbyCodeSpan = document.getElementById('lobby-code');
+const waitingPlayers = document.getElementById('waiting-players');
 const readyChk = document.getElementById('readyChk');
-const playBtn = document.getElementById('playBtn');
-const slapBtn = document.getElementById('slapBtn');
+const startBtn = document.getElementById('startBtn');
 const playersDiv = document.getElementById('players');
 const centerTop = document.getElementById('centerTop');
 const centerCount = document.getElementById('centerCount');
 const messages = document.getElementById('messages');
+const playBtn = document.getElementById('playBtn');
+const slapBtn = document.getElementById('slapBtn');
 const fsBtn = document.getElementById('fsBtn');
-const app = document.getElementById('app');
 
-function log(msg) {
+function log(msg, className='') {
   const d = document.createElement('div');
   d.textContent = msg;
+  if (className) d.className = className;
   messages.prepend(d);
 }
 
-joinBtn.onclick = ()=>{
-  const n = nameInput.value.trim() || 'Giocatore';
-  socket.emit('join', n);
-}
+// Forms and button handlers
+createForm.onsubmit = e => {
+  e.preventDefault();
+  const name = createName.value.trim();
+  if (!name) return;
+  socket.emit('create-lobby', name);
+};
 
-startBtn.onclick = ()=> socket.emit('start');
-readyChk.onchange = ()=> socket.emit('set-ready', !!readyChk.checked);
-playBtn.onclick = ()=> socket.emit('play-card');
-slapBtn.onclick = ()=> socket.emit('slap');
+joinForm.onsubmit = e => {
+  e.preventDefault();
+  const code = joinCode.value.trim().toUpperCase();
+  const name = joinName.value.trim();
+  if (!code || !name) return;
+  socket.emit('join-lobby', {code, name});
+};
 
-socket.on('joined', data => {
-  myId = data.id;
-  log('Sei dentro come ' + data.name);
-  if (readyChk) readyChk.checked = false;
+readyChk.onchange = () => {
+  socket.emit('set-ready', readyChk.checked);
+};
+
+startBtn.onclick = () => {
+  socket.emit('start');
+};
+
+playBtn.onclick = () => socket.emit('play-card');
+slapBtn.onclick = () => socket.emit('slap');
+
+// Keyboard controls
+document.addEventListener('keydown', e => {
+  if (!myId || !myLobbyCode) return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    socket.emit('play-card');
+  }
+  if (e.code === 'KeyF') {
+    e.preventDefault();
+    socket.emit('slap');
+  }
 });
 
-socket.on('state', s => {
-  playersDiv.innerHTML = '';
-  s.players.forEach((p, idx) => {
-    const el = document.createElement('div');
-    el.className = 'player';
-    if (p.id === s.turnPlayerId) el.classList.add('active');
-    const avatar = document.createElement('div');
-    avatar.className = 'avatar';
-    avatar.textContent = p.name[0] || '?';
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${p.name} ${s.lobbyHostId === p.id ? '<span class="host">(host)</span>' : ''}</div><div class="count">${p.handCount} carte ${p.ready? '· Ready':''}</div>`;
-    el.appendChild(avatar);
-    el.appendChild(info);
-    playersDiv.appendChild(el);
-  });
-  centerCount.textContent = s.centerCount;
-  // try to show image if exists in /cards; else fall back to text
-  if (s.top) {
+// Card loading helper
+function tryLoadCard(rank, suit) {
+  return new Promise((resolve) => {
     // sanitize suit names to file-friendly tokens
     const suitMap = {'♠':'spades','♣':'clubs','♥':'hearts','♦':'diamonds'};
-    const suitToken = suitMap[s.top.suit] || s.top.suit;
-    const rankToken = s.top.rank;
+    const suitToken = suitMap[suit] || suit;
+    const rankToken = rank;
     const fnameBase = `${rankToken}_${suitToken}`;
 
     function tryLoad(paths, idx = 0) {
       if (idx >= paths.length) {
         centerTop.textContent = '?';
+        resolve();
         return;
       }
       const p = paths[idx];
       const img = document.createElement('img');
       img.className = 'card-img';
       img.src = p;
-      img.alt = rankToken + s.top.suit;
-      img.onload = ()=>{
+      img.alt = rankToken + suit;
+      img.onload = () => {
         centerTop.innerHTML = '';
         centerTop.appendChild(img);
+        resolve();
       };
-      img.onerror = ()=> tryLoad(paths, idx+1);
+      img.onerror = () => tryLoad(paths, idx+1);
     }
 
     const tries = [`/cards/${fnameBase}.png`, `/cards/${fnameBase}.svg`, '/cards/placeholder.svg'];
     tryLoad(tries);
+  });
+}
+
+// Socket event handlers
+socket.on('lobby-created', ({code, id, name}) => {
+  myId = id;
+  myLobbyCode = code;
+  lobbyCodeSpan.textContent = code;
+  createForm.classList.add('hidden');
+  joinForm.classList.add('hidden');
+  waitingRoom.classList.remove('hidden');
+  readyChk.checked = false;
+  log('Hai creato la lobby ' + code);
+});
+
+socket.on('joined', ({code, id, name}) => {
+  myId = id;
+  myLobbyCode = code;
+  lobbyCodeSpan.textContent = code;
+  createForm.classList.add('hidden');
+  joinForm.classList.add('hidden');
+  waitingRoom.classList.remove('hidden');
+  readyChk.checked = false;
+  log('Sei dentro come ' + name);
+});
+
+socket.on('join-failed', msg => {
+  alert(msg);
+});
+
+socket.on('game-started', () => {
+  lobbyView.classList.remove('active');
+  gameView.classList.add('active');
+  log('La partita è iniziata!', 'highlight');
+});
+
+socket.on('state', state => {
+  // Update players list (both waiting room and in-game)
+  const list = state.gameStarted ? playersDiv : waitingPlayers;
+  list.innerHTML = '';
+  
+  state.players.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'player';
+    if (p.id === state.turnPlayerId) el.classList.add('active');
+    
+    // Avatar with first letter
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = p.name[0].toUpperCase();
+    
+    // Player info
+    const info = document.createElement('div');
+    info.className = 'info';
+    info.innerHTML = `
+      <div class="name">${p.name} ${state.hostId === p.id ? '<span class="host">👑 Host</span>' : ''}</div>
+      <div class="count">${p.handCount ? `${p.handCount} carte` : ''} ${p.ready ? '· Ready' : ''}</div>
+    `;
+    
+    el.appendChild(avatar);
+    el.appendChild(info);
+    list.appendChild(el);
+  });
+  
+  // Show/hide start button for host
+  if (!state.gameStarted) {
+    startBtn.classList.toggle('hidden', state.hostId !== myId);
+  }
+  
+  // Update center pile
+  centerCount.textContent = state.centerCount ? `${state.centerCount} carte` : 'Vuoto';
+  if (state.top) {
+    tryLoadCard(state.top.rank, state.top.suit);
   } else {
     centerTop.textContent = '?';
   }
 });
 
-socket.on('card-played', d=>{
-  log(`${d.playerId} ha buttato ${d.card.rank}${d.card.suit}`);
-  if (d.double) log('Doppia! Prendi il mazzo!');
-  // small pulse animation for card slot
+socket.on('turn-changed', ({playerId, turnIndex}) => {
+  // Remove active from all players
+  const players = document.querySelectorAll('.player');
+  players.forEach(p => p.classList.remove('active'));
+  
+  // Add active to current player with animation
+  const activePlayer = Array.from(players)[turnIndex];
+  if (activePlayer) {
+    activePlayer.classList.add('active');
+    // Scroll into view if needed
+    activePlayer.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }
+  
+  // Find player name
+  const name = activePlayer ? 
+    activePlayer.querySelector('.name').textContent.split('👑')[0].trim() : 
+    'Unknown';
+  log(`Turno di ${name}`);
+});
+
+socket.on('card-played', ({playerId, card, double, special}) => {
+  // Find player name
+  const player = Array.from(document.querySelectorAll('.player'))
+    .find(p => p.textContent.includes(playerId));
+  const name = player ? 
+    player.querySelector('.name').textContent.split('👑')[0].trim() : 
+    'Unknown';
+  
+  log(`${name} ha buttato ${card.rank}${card.suit}`);
+  
+  if (double) {
+    log('Doppia! Prendi il mazzo!', 'highlight');
+    // Flash the center card
+    centerTop.animate([
+      {filter: 'brightness(1)'},
+      {filter: 'brightness(1.5)'},
+      {filter: 'brightness(1)'}
+    ], {duration: 500});
+  }
+  
+  if (special) {
+    log(`${name} ha buttato ${card.rank} - Il prossimo deve buttare ${special.remaining} carte!`, 'highlight');
+  }
+  
+  // Card play animation
   const slot = document.querySelector('.card-slot');
   if (slot) {
-    slot.animate([{transform:'scale(1)'},{transform:'scale(1.03)'},{transform:'scale(1)'}],{duration:220});
+    slot.animate([
+      {transform: 'scale(1)'},
+      {transform: 'scale(1.03)'},
+      {transform: 'scale(1)'}
+    ], {duration: 220});
   }
 });
 
-socket.on('slap-win', d=>{
-  log(`${d.playerId} ha vinto il mazzo (${d.wonCount} carte)`);
+socket.on('slap-win', ({playerId, wonCount}) => {
+  const player = Array.from(document.querySelectorAll('.player'))
+    .find(p => p.textContent.includes(playerId));
+  const name = player ? 
+    player.querySelector('.name').textContent.split('👑')[0].trim() : 
+    'Unknown';
+  log(`${name} ha vinto il mazzo (${wonCount} carte)!`, 'highlight');
 });
 
-socket.on('invalid-slap', d=>{
-  log(`${d.playerId} ha sbagliato lo slap! Penalità.`);
+socket.on('invalid-slap', ({playerId}) => {
+  const player = Array.from(document.querySelectorAll('.player'))
+    .find(p => p.textContent.includes(playerId));
+  const name = player ? 
+    player.querySelector('.name').textContent.split('👑')[0].trim() : 
+    'Unknown';
+  log(`${name} ha sbagliato lo slap! Penalità.`, 'error');
 });
 
-socket.on('penalty-applied', d=>{
-  log(`${d.playerId} penalizzato per spam.`);
+socket.on('penalty-applied', ({playerId}) => {
+  const player = Array.from(document.querySelectorAll('.player'))
+    .find(p => p.textContent.includes(playerId));
+  const name = player ? 
+    player.querySelector('.name').textContent.split('👑')[0].trim() : 
+    'Unknown';
+  log(`${name} penalizzato per spam.`, 'error');
 });
 
-socket.on('game-over', d=>{
-  log(`Partita finita. Vincitore: ${d.winnerId}`);
+socket.on('game-over', ({winnerId}) => {
+  const player = Array.from(document.querySelectorAll('.player'))
+    .find(p => p.textContent.includes(winnerId));
+  const name = player ? 
+    player.querySelector('.name').textContent.split('👑')[0].trim() : 
+    'Unknown';
+  log(`🎉 Partita finita! ${name} ha vinto! 🎉`, 'highlight');
+  
+  // Victory animation
+  gameView.animate([
+    {backgroundColor: 'rgba(76,175,80,0.2)'},
+    {backgroundColor: 'transparent'}
+  ], {duration: 1500});
 });
 
-socket.on('error-msg', m=> log('Errore: '+m));
-
-// keyboard: space to play, f to slap
-document.addEventListener('keydown', e=>{
-  if (e.code === 'Space') {
-    e.preventDefault();
-    socket.emit('play-card');
-  }
-  if (e.key.toLowerCase() === 'f') {
-    socket.emit('slap');
-  }
+socket.on('error-msg', msg => {
+  log('Errore: ' + msg, 'error');
 });
 
-// simple touch: clicking the centerTop is a slap
-centerTop.addEventListener('click', ()=> socket.emit('slap'));
+// Touch controls: clicking centerTop is a slap
+centerTop.addEventListener('click', () => socket.emit('slap'));
 
-// fullscreen toggle
-fsBtn.addEventListener('click', ()=>{
+// Fullscreen toggle
+fsBtn.addEventListener('click', () => {
   if (!document.fullscreenElement) {
-    app.requestFullscreen().catch(err => console.error(err));
+    document.documentElement.requestFullscreen().catch(err => console.error(err));
   } else {
     document.exitFullscreen();
   }
 });
-
-// Scale center card responsively
-function resizeCard() {
-  const cs = window.getComputedStyle(centerTop);
-  // keep it proportional using CSS; nothing else needed here
-}
-window.addEventListener('resize', resizeCard);
-resizeCard();

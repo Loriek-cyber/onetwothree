@@ -1,55 +1,92 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gioco di Carte Semi-Online</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container" id="app">
-    <header class="topbar">
-      <div class="title">
-        <h1>Slap Game</h1>
-        <div class="subtitle">Gioco di carte semi-online - fino a 4 giocatori</div>
-      </div>
-      <div class="controls">
-        <input id="name" placeholder="Il tuo nome" />
-        <button id="joinBtn" class="btn">Entra</button>
-        <button id="startBtn" class="btn">Start</button>
-        <label class="ready-label"><input type="checkbox" id="readyChk" /> Ready</label>
-        <button id="fsBtn" class="btn outline">Fullscreen</button>
-      </div>
-    </header>
+  <!-- Pre-game lobby view -->
+  <div id="lobby-view" class="fullscreen-view active">
+    <div class="lobby-container">
+      <h1>Slap Game</h1>
+      <div class="subtitle">Gioco di carte semi-online - fino a 4 giocatori</div>
+      
+      <!-- Create/Join forms -->
+      <div class="lobby-forms">
+        <div class="form-section">
+          <h2>Crea Nuova Partita</h2>
+          <form id="create-form" class="centered-form">
+            <input type="text" id="create-name" placeholder="Il tuo nome" required>
+            <button type="submit" class="btn primary">Crea Lobby</button>
+          </form>
+        </div>
 
-    <main class="main-area">
-      <aside class="panel players-panel">
-        <h3>Giocatori</h3>
+        <div class="divider">oppure</div>
+
+        <div class="form-section">
+          <h2>Unisciti</h2>
+          <form id="join-form" class="centered-form">
+            <input type="text" id="join-code" placeholder="Codice lobby" required>
+            <input type="text" id="join-name" placeholder="Il tuo nome" required>
+            <button type="submit" class="btn">Unisciti</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Waiting room (shown after create/join) -->
+      <div id="waiting-room" class="waiting-room hidden">
+        <div class="lobby-info">
+          <h2>Codice Lobby: <span id="lobby-code"></span></h2>
+          <p>Condividi questo codice con gli amici per unirsi!</p>
+        </div>
+
+        <div class="players-list">
+          <h3>Giocatori</h3>
+          <ul id="waiting-players"></ul>
+        </div>
+
+        <div class="ready-section">
+          <label>
+            <input type="checkbox" id="readyChk"> Ready
+          </label>
+          <button id="startBtn" class="btn primary hidden">Start</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-game view -->
+  <div id="game-view" class="fullscreen-view">
+    <div class="game-container">
+      <!-- Players panel -->
+      <div class="panel players-panel">
+        <h2>Giocatori</h2>
         <div id="players" class="players"></div>
-      </aside>
+      </div>
 
-      <section class="center">
-        <div class="pile">
+      <!-- Center game area -->
+      <div class="center-area">
+        <div class="card-pile">
           <div id="centerTop" class="card-slot">?</div>
           <div id="centerCount" class="pile-count">0</div>
         </div>
 
-        <div class="actions">
+        <div class="controls">
           <button id="playBtn" class="btn primary">Butta (Space)</button>
-          <button id="slapBtn" class="btn accent">Prendi (F)</button>
+          <button id="slapBtn" class="btn accent">Prendi! (F)</button>
+          <button id="fsBtn" class="btn outline">Fullscreen</button>
         </div>
         <div class="hint">Tasti: Space = Butta, F = Prendi. Usa il pulsante Fullscreen per ingrandire.</div>
-      </section>
+      </div>
 
-      <aside class="panel log-panel">
-        <h3>Log</h3>
+      <!-- Game log -->
+      <div class="panel log-panel">
+        <h2>Log</h2>
         <div id="messages" class="messages"></div>
-      </aside>
-    </main>
-
-    <footer class="footer">
-      <div class="credits">Client minimal — metti le tue grafiche in <code>public/cards/</code></div>
-    </footer>
+      </div>
+    </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
