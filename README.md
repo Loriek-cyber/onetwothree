@@ -79,3 +79,23 @@ Deploying & publishing (GitHub + Render/GitHub Pages)
 If you want, posso:
 - configurare un repository Git locale, committare e se mi dai il repo (o permesso) posso pushare per te;
 - oppure guidarti passo-passo mentre fai il push e il deploy.
+
+Troubleshooting Render "Cannot find module '/opt/render/project/src/start'"
+-----------------------------------------------------------------
+If you see an error like:
+
+   Error: Cannot find module '/opt/render/project/src/start'
+
+This usually means the platform attempted to run `node start` (looked for a file named `start` or an entrypoint called `start`) but your repository's start command is set to `node server.js` in `package.json`. Two simple fixes:
+
+1) Preferred: In the Render dashboard set the Start Command to `npm start`. This will run the script defined in `package.json` (recommended).
+
+2) Alternate: Add a tiny shim file named `start` that requires your real server entrypoint. This repo includes such a shim (`start`) so `node start` will work. The shim simply does:
+
+```js
+require('./server.js');
+```
+
+Either option will prevent the `MODULE_NOT_FOUND` for `/opt/render/project/src/start`.
+
+If you're still stuck, paste the full Render deploy logs here and I'll help fix the config.

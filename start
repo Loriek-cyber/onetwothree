@@ -1,0 +1,4 @@
+// Shim to support hosting platforms that run `node start` (e.g. Render when misconfigured).
+// Running `node start` will execute this file and require the real server entrypoint.
+
+require('./server.js');
