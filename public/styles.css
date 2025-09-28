@@ -1,0 +1,59 @@
+:root{--bg:#0b1220;--card:#f8f9fb;--accent:#ff6b6b}
+*{box-sizing:border-box;font-family:Segoe UI, Roboto, Arial}
+html,body,#app{height:100%;}
+body{background:linear-gradient(180deg,#071124,#0b1220);color:#eee;margin:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:rgba(0,0,0,0.25);backdrop-filter:blur(4px)}
+.title h1{margin:0;font-size:1.4rem}
+.subtitle{font-size:0.85rem;color:#bcd3e6}
+.controls input{padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:inherit}
+.controls .btn{margin-left:8px;padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+.controls .btn.outline{background:transparent;border:1px solid rgba(255,255,255,0.08)}
+.main-area{display:flex;flex:1;gap:20px;padding:18px}
+.panel{background:rgba(0,0,0,0.25);border-radius:8px;padding:12px;min-width:180px;max-width:260px}
+.players-panel{flex:0 0 220px}
+.log-panel{flex:0 0 260px;display:flex;flex-direction:column}
+.players{max-height:calc(100vh - 200px);overflow:auto}
+.player{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center}
+.player .turn{background:var(--accent);padding:2px 6px;border-radius:4px;margin-left:8px}
+.player{display:flex;gap:8px;align-items:center}
+.player .avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-weight:700}
+.player .info{display:flex;flex-direction:column}
+.player.active{box-shadow:0 4px 16px rgba(0,0,0,0.6);background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.pile{display:flex;flex-direction:column;align-items:center}
+.pile-count{margin-top:6px;color:#a8c0d3}
+.card-slot{height:52vh;max-height:520px;width:34vh;max-width:360px;margin:8px auto;background:var(--card);color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 10px 30px rgba(0,0,0,0.6);transition:transform .18s ease}
+.card-slot:active{transform:scale(.98)}
+.card-img{height:100%;width:100%;object-fit:contain;border-radius:10px}
+.actions{display:flex;gap:8px}
+.btn.primary{background:linear-gradient(180deg,#2e8b57,#2a7f4f)}
+.btn.accent{background:linear-gradient(180deg,var(--accent),#cc4f4f)}
+.hint{font-size:0.85rem;color:#9fb3c8;margin-top:8px}
+.messages{overflow:auto;max-height:60vh}
+.footer{padding:8px 18px;font-size:0.85rem;color:#9fb3c8}
+
+/* Mobile responsiveness */
+@media (max-width: 800px) {
+	.main-area{flex-direction:column;padding:12px}
+	.players-panel, .log-panel{max-width:100%;width:100%}
+	.card-slot{height:46vh;width:60vw}
+	.controls{display:flex;flex-wrap:wrap;gap:8px}
+	.controls input{flex:1 1 140px}
+	.controls .btn{flex:0 0 auto}
+}
+header{display:flex;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.6rem}
+.controls input{padding:6px;border-radius:6px;border:0}
+.controls button{margin-left:8px;padding:6px 10px;border-radius:6px;border:0;background:var(--accent);color:#fff}
+.main-area{display:flex;flex:1;gap:20px;padding:18px}
+.players{flex:1;padding:12px;background:#071828;border-radius:8px;min-height:160px;overflow:auto}
+.player{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between}
+.player .turn{background:var(--accent);padding:2px 6px;border-radius:4px;margin-left:8px}
+.center{width:40%;max-width:520px;padding:12px;background:#072033;border-radius:8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.card-slot{height:60vh;max-height:520px;width:40vh;max-width:360px;margin:8px auto;background:var(--card);color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+.card-img{height:100%;width:100%;object-fit:contain;border-radius:10px}
+.actions{margin-top:12px}
+.actions button{padding:8px 12px;margin:6px;border-radius:8px;border:0}
+.hint{margin-top:8px;font-size:0.9rem;color:#a8c0d3}
+footer{margin-top:14px}
+#messages{max-height:200px;overflow:auto}
