@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const logger = require('./utils/logger');
+const gameLogic = require('./game/gameLogic');
 
 const app = express();
 const server = http.createServer(app);
@@ -9,6 +11,15 @@ const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/public'));
+
+// Log all requests
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`, { 
+    ip: req.ip,
+    userAgent: req.get('user-agent')
+  });
+  next();
+});
 
 // Game state - multiple lobbies
 const MAX_PLAYERS = 4;
@@ -249,38 +260,111 @@ io.on('connection', socket => {
     // if we are currently in a special requirement
     if (lobby.specialRequirement) {
       const req = lobby.specialRequirement;
-      // if the played card is A/2/3, start a new requirement with this player as initiator
-      const newSpec = makeSpecial(card.rank, player.id);
-      if (newSpec) {
-        lobby.specialRequirement = newSpec;
-        io.to(lobby.code).emit('card-played', {playerId: player.id, card, double, special: lobby.specialRequirement});
-        // move to next player to respond to new requirement
-        nextTurn(lobby, 1);
+      
+      // Check if the played card is valid for responding to special requirement
+      const playedSpecial = makeSpecial(card.rank, player.id);
+      if (!playedSpecial) {
+        // Must play A/2/3 to respond
+        socket.emit('error-msg', 'Must play A, 2, or 3 to respond');
+        // Return card to hand
+        player.hand.unshift(card);
+        lobby.centerPile.pop();
+        broadcastState(lobby);
+        return;
+      }
+      
+      // Check if played card has equal or higher count than requirement
+      if (playedSpecial.count < req.count) {
+        socket.emit('error-msg', 'Must play equal or higher value card');
+        // Return card to hand
+        player.hand.unshift(card);
+        lobby.centerPile.pop();
         broadcastState(lobby);
         return;
       }
 
-      // otherwise decrement remaining
-      req.remaining -= 1;
-      io.to(lobby.code).emit('card-played', {playerId: player.id, card, double, special: req});
-
-      if (req.remaining <= 0) {
-        // requirement failed to be countered: initiator wins the center pile
-        const initiator = lobby.players.find(p=>p.id === req.initiatorId);
+      // If the card wasn't a special card or was too low, the current requirement fails
+      // and the previous initiator wins the pile
+      const failedResponse = !playedSpecial || playedSpecial.count < req.count;
+      if (failedResponse) {
+        const initiator = lobby.players.find(p => p.id === req.initiatorId);
         if (initiator) {
           const won = lobby.centerPile.splice(0, lobby.centerPile.length);
           initiator.hand.push(...won);
-          io.to(lobby.code).emit('special-resolve', {winnerId: initiator.id, wonCount: won.length});
-          // set turn to initiator index
-          const newIdx = lobby.players.findIndex(p=>p.id === initiator.id);
-          if (newIdx !== -1) lobby.turnIndex = newIdx;
+          
+          // Emit detailed special resolve event
+          io.to(lobby.code).emit('special-resolve', {
+            winnerId: initiator.id, 
+            wonCount: won.length,
+            reason: 'Failed to counter with valid card',
+            nextTurn: initiator.name,
+            requirementRank: req.cardRank
+          });
+
+          // Emit turn notification to make it very clear
+          io.to(lobby.code).emit('requirement-complete', {
+            winner: initiator.name,
+            wonCards: won.length,
+            nextTurn: initiator.name,
+            message: `${initiator.name} wins ${won.length} cards! It's their turn now.`
+          });
+
+          // set turn to initiator
+          const newIdx = lobby.players.findIndex(p => p.id === initiator.id);
+          if (newIdx !== -1) {
+            lobby.turnIndex = newIdx;
+            // Also emit turn change event
+            io.to(lobby.code).emit('turn-changed', {
+              playerId: initiator.id,
+              turnIndex: newIdx,
+              reason: 'Won special requirement'
+            });
+          }
         }
         lobby.specialRequirement = null;
         broadcastState(lobby);
         return;
       }
 
-      // still pending: advance to next player who must continue playing
+      // Valid response - start a new requirement with this player as initiator
+      io.to(lobby.code).emit('card-played', {playerId: player.id, card, double, special: lobby.specialRequirement});
+      // move to next player to respond to new requirement  
+      nextTurn(lobby, 1);
+      broadcastState(lobby);
+      return;
+
+      // Valid response - apply the chain requirement
+      const newChain = {
+        count: playedSpecial.count,
+        remaining: playedSpecial.count,
+        initiatorId: player.id,
+        previousInitiatorId: req.initiatorId, // track previous initiator for chain resolution
+        cardRank: card.rank // store the rank that started this requirement
+      };
+      
+      lobby.specialRequirement = newChain;
+      
+      // Emit detailed event about the chain
+      io.to(lobby.code).emit('card-played', {
+        playerId: player.id, 
+        card, 
+        double,
+        special: newChain,
+        chainedFrom: req.initiatorId,
+        requirementType: 'chain',
+        message: `${player.name} countered with ${card.rank} - next player must play ${card.rank} or higher!`
+      });
+
+      // Emit special event to make turn order clear
+      const nextPlayer = lobby.players[(lobby.turnIndex + 1) % lobby.players.length];
+      io.to(lobby.code).emit('requirement-chained', {
+        previousPlayer: player.name,
+        nextPlayer: nextPlayer.name,
+        cardRank: card.rank,
+        cardsNeeded: newChain.count
+      });
+
+      // Move to next player to respond to new requirement
       nextTurn(lobby, 1);
       broadcastState(lobby);
       return;
