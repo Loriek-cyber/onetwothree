@@ -22,3 +22,150 @@
 2025-09-29 00:44:04 [info]: GET /cards/3_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
 2025-09-29 00:44:06 [info]: GET /cards/3_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
 2025-09-29 00:44:06 [info]: GET /cards/3_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:09:14 [error]: uncaughtException: Cannot find module './utils/logger'
+Require stack:
+- C:\Users\Arjel Buzi\Documents\code\123\game\specialRules.js
+- C:\Users\Arjel Buzi\Documents\code\123\server.js
+Error: Cannot find module './utils/logger'
+Require stack:
+- C:\Users\Arjel Buzi\Documents\code\123\game\specialRules.js
+- C:\Users\Arjel Buzi\Documents\code\123\server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1420:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1058:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1063:22)
+    at Module._load (node:internal/modules/cjs/loader:1226:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:244:24)
+    at Module.require (node:internal/modules/cjs/loader:1503:12)
+    at require (node:internal/modules/helpers:152:16)
+    at handleSpecialRequirement (C:\Users\Arjel Buzi\Documents\code\123\game\specialRules.js:3:18)
+    at Socket.<anonymous> (C:\Users\Arjel Buzi\Documents\code\123\server.js:250:20) | {"metadata":{"error":{"code":"MODULE_NOT_FOUND","requireStack":["C:\\Users\\Arjel Buzi\\Documents\\code\\123\\game\\specialRules.js","C:\\Users\\Arjel Buzi\\Documents\\code\\123\\server.js"]},"stack":"Error: Cannot find module './utils/logger'\nRequire stack:\n- C:\\Users\\Arjel Buzi\\Documents\\code\\123\\game\\specialRules.js\n- C:\\Users\\Arjel Buzi\\Documents\\code\\123\\server.js\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1420:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1058:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1063:22)\n    at Module._load (node:internal/modules/cjs/loader:1226:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:244:24)\n    at Module.require (node:internal/modules/cjs/loader:1503:12)\n    at require (node:internal/modules/helpers:152:16)\n    at handleSpecialRequirement (C:\\Users\\Arjel Buzi\\Documents\\code\\123\\game\\specialRules.js:3:18)\n    at Socket.<anonymous> (C:\\Users\\Arjel Buzi\\Documents\\code\\123\\server.js:250:20)","exception":true,"date":"Mon Sep 29 2025 01:09:14 GMT+0200 (Ora legale dell’Europa centrale)","process":{"pid":45968,"uid":null,"gid":null,"cwd":"C:\\Users\\Arjel Buzi\\Documents\\code\\123","execPath":"C:\\Program Files\\nodejs\\node.exe","version":"v24.8.0","argv":["C:\\Program Files\\nodejs\\node.exe","C:\\Users\\Arjel Buzi\\Documents\\code\\123\\server.js"],"memoryUsage":{"rss":56164352,"heapTotal":13692928,"heapUsed":11690120,"external":2397171,"arrayBuffers":22943}},"os":{"loadavg":[0,0,0],"uptime":362582.218},"trace":[{"column":15,"file":"node:internal/modules/cjs/loader","function":"Module._resolveFilename","line":1420,"method":"_resolveFilename","native":false},{"column":19,"file":"node:internal/modules/cjs/loader","function":"defaultResolveImpl","line":1058,"method":null,"native":false},{"column":22,"file":"node:internal/modules/cjs/loader","function":"resolveForCJSWithHooks","line":1063,"method":null,"native":false},{"column":37,"file":"node:internal/modules/cjs/loader","function":"Module._load","line":1226,"method":"_load","native":false},{"column":14,"file":"node:diagnostics_channel","function":"TracingChannel.traceSync","line":322,"method":"traceSync","native":false},{"column":24,"file":"node:internal/modules/cjs/loader","function":"wrapModuleLoad","line":244,"method":null,"native":false},{"column":12,"file":"node:internal/modules/cjs/loader","function":"Module.require","line":1503,"method":"require","native":false},{"column":16,"file":"node:internal/modules/helpers","function":"require","line":152,"method":null,"native":false},{"column":18,"file":"C:\\Users\\Arjel Buzi\\Documents\\code\\123\\game\\specialRules.js","function":"handleSpecialRequirement","line":3,"method":null,"native":false},{"column":20,"file":"C:\\Users\\Arjel Buzi\\Documents\\code\\123\\server.js","function":null,"line":250,"method":null,"native":false}]}}
+2025-09-29 01:09:15 [info]: GET /cards/9_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:09:15 [info]: GET /cards/9_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:17 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:17 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:19 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:19 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:30 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:30 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:33 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:33 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:35 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:35 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:37 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:37 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:38 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:38 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:40 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:40 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:41 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:41 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:41 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:41 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:42 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 01:12:43 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:25 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:56 [info]: GET /cards/Q_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:56 [info]: GET /cards/Q_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:58 [info]: GET /cards/Q_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:58 [info]: GET /cards/Q_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:59 [info]: GET /cards/Q_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 09:58:59 [info]: GET /cards/Q_clubs.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:23 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:28 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:48 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:48 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:49 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:49 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:51 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:51 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:53 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:53 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:54 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:54 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:55 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:55 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:55 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:55 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:55 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:55 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:56 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:57 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:58 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:02:59 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:04:33 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:04:34 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:04:52 [info]: lobby_created | {"metadata":{"type":"game_event","lobbyCode":"ZBG5WW"}}
+2025-09-29 10:05:12 [info]: deck_created | {"metadata":{"type":"game_event","count":52}}
+2025-09-29 10:05:12 [info]: deck_shuffled | {"metadata":{"type":"game_event"}}
+2025-09-29 10:05:12 [info]: cards_dealt | {"metadata":{"type":"game_event","playerCount":2,"cardsPerPlayer":26,"remainingInDeck":0}}
+2025-09-29 10:05:14 [info]: GET /cards/A_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:14 [info]: GET /cards/A_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:15 [info]: GET /cards/A_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:15 [info]: GET /cards/A_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:25 [info]: GET /cards/A_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:25 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:27 [info]: GET /favicon.ico | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:31 [info]: lobby_created | {"metadata":{"type":"game_event","lobbyCode":"JDNDRS"}}
+2025-09-29 10:05:46 [info]: deck_created | {"metadata":{"type":"game_event","count":52}}
+2025-09-29 10:05:46 [info]: deck_shuffled | {"metadata":{"type":"game_event"}}
+2025-09-29 10:05:46 [info]: cards_dealt | {"metadata":{"type":"game_event","playerCount":2,"cardsPerPlayer":26,"remainingInDeck":0}}
+2025-09-29 10:05:47 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:47 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:49 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:05:49 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}
+2025-09-29 10:06:21 [info]: GET /cards/3_diamonds.png | {"metadata":{"ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"}}

@@ -1,6 +1,12 @@
 // Game state management for special requirements (A/2/3)
+// Initialize a simple logger
+const logger = {
+  gameEvent: (eventName, data) => console.log(`[GameEvent] ${eventName}:`, data),
+  error: (msg, data) => console.error(`[Error] ${msg}:`, data),
+  info: (msg, data) => console.log(`[Info] ${msg}:`, data)
+};
+
 function handleSpecialRequirement(lobby, card, player, socket) {
-  const logger = require('./utils/logger');
 
   // If we're in the middle of fulfilling a requirement
   if (lobby.specialRequirement) {

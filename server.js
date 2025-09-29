@@ -23,7 +23,6 @@ app.use((req, res, next) => {
 
 // Game state - multiple lobbies
 const MAX_PLAYERS = 4;
-const LOBBY_CODE_LENGTH = 6;
 
 // Map of lobby code -> lobby state
 const lobbies = new Map();
@@ -31,64 +30,8 @@ const lobbies = new Map();
 // Map of socket id -> lobby code for quick lookups
 const playerLobbies = new Map();
 
-// Generate random lobby code
-function generateLobbyCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Omit similar looking chars
-  let code;
-  do {
-    code = Array(LOBBY_CODE_LENGTH).fill(0)
-      .map(() => chars[Math.floor(Math.random() * chars.length)])
-      .join('');
-  } while(lobbies.has(code));
-  return code;
-}
-
-// Create new lobby state
-function createLobby() {
-  return {
-    code: generateLobbyCode(),
-    players: [], // {id, name, socketId, hand: [], ready: bool}
-    deck: [],
-    centerPile: [],
-    turnIndex: 0,
-    gameStarted: false,
-    hostId: null,
-    slapCooldown: {}, // socketId -> timestamp for anti-spam
-    specialRequirement: null
-  };
-}
-
-function createDeck() {
-  const suits = ['♠', '♥', '♦', '♣'];
-  const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-  const d = [];
-  for (const s of suits) for (const r of ranks) d.push({suit:s,rank:r});
-  return d;
-}
-
-function shuffle(array) {
-  for (let i = array.length -1; i>0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-function deal(lobby) {
-  lobby.deck = createDeck();
-  shuffle(lobby.deck);
-  const n = lobby.players.length;
-  const per = Math.floor(lobby.deck.length / n);
-  // clear hands
-  lobby.players.forEach(p => p.hand = []);
-  // deal per cards to each player in round-robin
-  let idx = 0;
-  for (let i = 0; i < per * n; i++) {
-    lobby.players[idx].hand.push(lobby.deck[i]);
-    idx = (idx + 1) % n;
-  }
-  // remove dealt cards from deck (they are distributed)
-  lobby.deck = lobby.deck.slice(per*n);
-}
+// Use gameLogic functions
+const { createLobby, deal } = gameLogic;
 
 function getPublicState(lobby) {
   const publicPlayers = lobby.players.map(p => ({
@@ -102,6 +45,7 @@ function getPublicState(lobby) {
     players: publicPlayers,
     centerCount: lobby.centerPile.length,
     top: lobby.centerPile.length ? lobby.centerPile[lobby.centerPile.length-1] : null,
+    previous: lobby.centerPile.length > 1 ? lobby.centerPile[lobby.centerPile.length-2] : null,
     turnPlayerId: lobby.players.length ? lobby.players[lobby.turnIndex].id : null,
     gameStarted: lobby.gameStarted,
     hostId: lobby.hostId,

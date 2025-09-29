@@ -105,6 +105,60 @@ function tryLoadCard(rank, suit) {
   });
 }
 
+// New function to update center pile UI with last and previous cards
+function updateCenterPile(state) {
+  const centerPileElement = document.getElementById('centerPile');
+  if (!centerPileElement) return;
+  centerPileElement.innerHTML = '';
+  
+  // Display the penultimate (previous) card if exists
+  if (state.previous) {
+    const prevCard = document.createElement('img');
+    prevCard.src = '/cards/' + formatCardImage(state.previous);
+    prevCard.classList.add('center-card', 'previous-card');
+    // Add animation class for smooth fade-in
+    prevCard.classList.add('fade-in');
+    centerPileElement.appendChild(prevCard);
+  }
+  
+  // Display the last (top) card if exists
+  if (state.top) {
+    const topCard = document.createElement('img');
+    topCard.src = '/cards/' + formatCardImage(state.top);
+    topCard.classList.add('center-card', 'top-card');
+    // Add animation class for smooth fade-in
+    topCard.classList.add('fade-in');
+    centerPileElement.appendChild(topCard);
+  }
+}
+
+// Helper function to format a card image filename
+function formatCardImage(card) {
+  let suitName = '';
+  switch(card.suit) {
+    case '♠': suitName = 'spades'; break;
+    case '♥': suitName = 'hearts'; break;
+    case '♦': suitName = 'diamonds'; break;
+    case '♣': suitName = 'clubs'; break;
+    default: suitName = 'unknown'; break;
+  }
+  return card.rank + '_' + suitName + '.png';
+}
+
+// Function to toggle the lobby menu (sliding menu effect)
+function toggleLobbyMenu() {
+  const lobbyMenu = document.getElementById('lobbyMenu');
+  if (lobbyMenu) {
+    lobbyMenu.classList.toggle('visible');
+  }
+}
+
+// Example: Attach toggle to a button click
+const lobbyMenuButton = document.getElementById('lobbyMenuButton');
+if (lobbyMenuButton) {
+  lobbyMenuButton.addEventListener('click', toggleLobbyMenu);
+}
+
 // Socket event handlers
 socket.on('lobby-created', ({code, id, name}) => {
   myId = id;
@@ -178,6 +232,9 @@ socket.on('state', state => {
   } else {
     centerTop.textContent = '?';
   }
+
+  // Update center pile UI with last and previous cards
+  updateCenterPile(state);
 });
 
 socket.on('turn-changed', ({playerId, turnIndex}) => {
